@@ -1,0 +1,152 @@
+openapi: 3.0.0
+# Added by API Auto Mocking Plugin
+servers:
+  - description: API
+    url: https://api.hirezstudios.com/{game}/{platform}
+    variables:
+      game:
+        default: smite
+        enum:
+          - smite
+          - paladins
+          - strike
+          - hotg
+          - realm
+        description: |
+          Specific game
+          * `smite` - Smite
+          * `paladins` - Paladins
+          * `strike` - Paladins Strike
+          * `hotg` - Hand of the Gods
+          * `realm` - Realm Royale
+      platform:
+        default: pc
+        enum:
+          - pc
+          - xbox
+          - ps4
+        description: |
+          Specific platform supports
+          * `pc` - PC
+          * `xbox` - XBOX One
+          * `ps4` - PlayStation 4
+info:
+  description: "$ref: './getting-started.md'"
+  version: 'v2'
+  title: Hi-Rez API
+  contact:
+    email: legal@hirezstudios.com
+  termsOfService: 'https://web2.hirez.com/hirez-studios/wp-content/uploads/2016/05/api-terms-of-use-agreement.pdf'
+tags:
+  - name: Match
+    description: Matches, demos, stats etc.
+  - name: User
+    description: Users, status, team, Achievements etc.
+  - name: Game
+    description: Patch info, Server status, Gods/champions, items, skins etc.
+  - name: Connection
+    description: ping, create, validate, revoke
+paths:
+  /ping:
+    get:
+      description: Pinging API.
+      responses:
+        '200': 
+          description: Sucessful ping returns `true`
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ping:
+                    type: boolean
+                    example: true
+                  
+  /session:
+    get:
+      tags: 
+        - Connection
+      description: Test Session
+      responses:
+        '200':
+          description: Session test sucessful.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dev_id:
+                    type: string
+                    example: 1004
+                  signature:
+                    type: string
+                    format: md5
+                    example: 8f53249be0922c94720834771ad43f0f
+        '404':
+          description: Session is not exist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-session'
+          
+    post:
+      tags: 
+        - Connection
+      description: Create Session
+      responses:
+        '200':
+          description: Session has been created sucessful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  session_id:
+                    type: string
+                    nullable: true
+                    example: 0ECDF26BC1F04EE4BA4AF10EC3604E04
+                  dev_id:
+                    type: string
+                    example: 1004
+        '429':
+          description: Exceeded rate limits for session creation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/429-session'
+    delete:
+      tags: 
+        - Connection
+      description: Remove Session
+      responses:
+        '204':
+          description: Sucessful removed session.
+        '404':
+          description: Session not exist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-session'
+      
+components:
+  schemas:
+    404-session:
+      type: object
+      properties:
+        error:
+          type: string
+          nullable: true
+          example: Session not exist
+        code:
+          type: integer
+          example: 404
+    429-session:
+      type: object
+      properties:
+        error:
+          type: string
+          nullable: true
+          example: Exceeded rate limits for session creation
+        code:
+          type: integer
+          example: 404

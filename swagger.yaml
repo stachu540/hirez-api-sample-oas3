@@ -31,7 +31,8 @@ servers:
           * `xbox` - XBOX One
           * `ps4` - PlayStation 4
 info:
-  description: "$ref: './getting-started.md'"
+  description: 
+    $ref: 'https://raw.githubusercontent.com/stachu540/hirez-api-sample-oas3/master/getting-started.md'
   version: 'v2'
   title: Hi-Rez API
   contact:
